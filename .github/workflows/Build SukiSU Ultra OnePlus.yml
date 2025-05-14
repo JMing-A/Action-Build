@@ -40,6 +40,7 @@ on:
           - oneplus_ace5
           - oneplus_pad2_v
           - oneplus_13
+          - JiuGeFaCai_oneplus_13_v
           - oneplus_ace5_pro
           - oneplus_13t
           - GitHub有bug可能不显示最后一项,误使用此项
@@ -332,11 +333,17 @@ jobs:
             fi
           fi
 
-      - name: Build kernel
+      - name: Build kernel_1
         if: ${{ github.event.inputs.CPU == 'sm8650' || github.event.inputs.CPU == 'sm7675' }}
         run: |
           cd kernel_workspace
           ./kernel_platform/build_with_bazel.py -t ${{ github.event.inputs.CPUD }} ${{ github.event.inputs.BUILD_METHOD }}
+
+      - name: Build kernel_2
+        run: |
+          cd kernel_workspace/kernel_platform
+          tools/bazel run --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+
           
       - name: Fallback build kernel
         if: ${{ github.event.inputs.CPU != 'sm8650' && github.event.inputs.CPU != 'sm7675' }}
